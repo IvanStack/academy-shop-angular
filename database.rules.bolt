@@ -1,0 +1,91 @@
+type User {
+  name: String,
+  email: String,
+  billingAddress: Address | Null,
+  shippingAddress: Address | Null,
+}
+
+type Address {
+  validate() {
+    this.streetAddress1.length > 1 &&
+    this.city.length >= 2 &&
+    this.country.length === 2
+  }
+
+  name: String,
+  streetAddress1: String,
+  streetAddress2: String,
+  city: String,
+  state: String,
+  postalCode: Number | Null,
+  country: String,
+}
+
+type Role {
+  isAdmin: Boolean,
+  isManager: Boolean,
+}
+
+type Product {
+  name: String,
+  description: String,
+  image: String,
+}
+
+type Order {
+  validate() { this.products.length > 0 }
+
+  products: OrderItem[],
+  shippingAddress: Address,
+  status: String,
+}
+
+type OrderItem {
+  validate() { this.quantity > 0 }
+
+  product: Product,
+  quantity: Number,
+}
+
+path /users/{uid} is User {
+  create() { isCurrentUser(uid) || isAdmin() }
+  read()   { isCurrentUser(uid) || isAdmin() }
+  update() { isCurrentUser(uid) || isAdmin() }
+  delete() { isAdmin() }
+}
+
+path /roles/{uid} is Role {
+  read()  { isAdmin() }
+  write() { isAdmin() }
+}
+
+path /products/{id} is Product {
+  create() { isManager() || isAdmin() }
+  read()   { true }
+  update() { isManager() || isAdmin() }
+  delete() { isAdmin() }
+}
+
+path /cart/{uid} is Order {
+  read()  { isCurrentUser(uid) }
+  write() { isCurrentUser(uid) }
+}
+
+path /orders/{uid}/{id} is Order {
+  create() { isCurrentUser(uid) }
+  read()   { isCurrentUser(uid) || isManager() || isAdmin() }
+  update() { false }
+  delete() { isAdmin() }
+}
+
+path /orders/{uid}/{id}/status {
+  create() { isCurrentUser(uid) }
+  read()   { isCurrentUser(uid) || isManager() }
+  update() { isManager() }
+  delete() { false }
+}
+
+isCurrentUser(uid) { auth !== null && auth.uid === uid }
+
+isAdmin()   { auth !== null && root.roles[auth.uid].isAdmin   }
+isManager() { auth !== null && root.roles[auth.uid].isManager }
