@@ -1,14 +1,21 @@
 import { Component } from '@angular/core';
+import { ObservableMedia } from '@angular/flex-layout';
 
 @Component({
   selector: 'app-root',
   template: `
     <div class="app-container">
       <md-toolbar color="primary" class="mat-elevation-z6">
+        <button *ngIf="!media.isActive('gt-sm')" type="button" md-icon-button (click)="sidenav.toggle()">
+          <md-icon>menu</md-icon>
+        </button>
         <span>Ye Olde Shoppe</span>
       </md-toolbar>
       <md-sidenav-container>
-        <md-sidenav class="mat-elevation-z4" mode="side" opened="true" disableClose="true">
+        <md-sidenav #sidenav class="mat-elevation-z4"
+            [mode]="!media.isActive('gt-sm') ? 'push' : 'side'"
+            [opened]="media.isActive('gt-sm')"
+            [disableClose]="media.isActive('gt-sm')">
           <app-navigation></app-navigation>
         </md-sidenav>
         <section>
@@ -51,4 +58,6 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'Ye Olde Shoppe';
+
+  constructor(public media: ObservableMedia) { }
 }
