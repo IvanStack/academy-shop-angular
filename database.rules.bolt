@@ -1,6 +1,6 @@
 type User {
-  name: String,
-  email: String,
+  displayName: String,
+  photoURL: String,
   billingAddress: Address | Null,
   shippingAddress: Address | Null,
 }
@@ -47,6 +47,11 @@ type OrderItem {
   quantity: Number,
 }
 
+path /users {
+  read()  { isAdmin() }
+  write() { false }
+}
+
 path /users/{uid} is User {
   create() { isCurrentUser(uid) || isAdmin() }
   read()   { isCurrentUser(uid) || isAdmin() }
@@ -59,6 +64,11 @@ path /roles/{uid} is Role {
   write() { isAdmin() }
 }
 
+path /products {
+  read()  { true }
+  write() { false }
+}
+
 path /products/{id} is Product {
   create() { isManager() || isAdmin() }
   read()   { true }
@@ -67,15 +77,20 @@ path /products/{id} is Product {
 }
 
 path /cart/{uid} is Order {
-  read()  { isCurrentUser(uid) }
-  write() { isCurrentUser(uid) }
+  create() { isCurrentUser(uid) }
+  read()   { isCurrentUser(uid) }
+  update() { isCurrentUser(uid) }
+  delete() { isCurrentUser(uid) || isAdmin() }
+}
+
+path /orders/{uid} {
+  delete() { isAdmin() }
 }
 
 path /orders/{uid}/{id} is Order {
   create() { isCurrentUser(uid) }
   read()   { isCurrentUser(uid) || isManager() || isAdmin() }
   update() { false }
-  delete() { isAdmin() }
 }
 
 path /orders/{uid}/{id}/status {
@@ -87,5 +102,5 @@ path /orders/{uid}/{id}/status {
 
 isCurrentUser(uid) { auth !== null && auth.uid === uid }
 
-isAdmin()   { auth !== null && root.roles[auth.uid].isAdmin   }
-isManager() { auth !== null && root.roles[auth.uid].isManager }
+isAdmin()   { auth !== null && prior(root.roles[auth.uid].isAdmin)   }
+isManager() { auth !== null && prior(root.roles[auth.uid].isManager) }
