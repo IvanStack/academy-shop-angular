@@ -28,11 +28,13 @@ import { AngularFireAuthModule } from 'angularfire2/auth';
 
 import { environment } from '../environments/environment';
 
-import * as routes from './app.states';
+import { MAIN_STATES, uiRouterConfigFn } from './app.states';
 import { ProductsComponent } from './products/products.component';
+import { ProfileComponent } from './profile/profile.component';
 import { NavigationComponent } from './navigation/navigation.component';
 
 import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/mergeMap';
@@ -42,6 +44,7 @@ import 'rxjs/add/operator/takeWhile';
   declarations: [
     AppComponent,
     ProductsComponent,
+    ProfileComponent,
     NavigationComponent,
   ],
   imports: [
@@ -62,7 +65,10 @@ import 'rxjs/add/operator/takeWhile';
 
     StoreModule.forRoot(reducers, { metaReducers }),
     EffectsModule.forRoot([ AuthEffects ]),
-    UIRouterModule.forRoot(routes),
+    UIRouterModule.forRoot({
+      states: MAIN_STATES,
+      config: uiRouterConfigFn,
+    }),
   ],
   providers: [
     AuthService,

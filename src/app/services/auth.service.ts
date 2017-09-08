@@ -8,6 +8,8 @@ import * as firebase from 'firebase/app';
 
 @Injectable()
 export class AuthService {
+  public user: User = null;
+
   constructor(private afAuth: AngularFireAuth, private db: AngularFireDatabase) { }
 
   login() {
@@ -59,6 +61,10 @@ export class AuthService {
 
   refreshAuth() {
     return this.afAuth.authState
-      .switchMap(user => this.mergeRoleAndProfile(user));
+      .switchMap(user => this.mergeRoleAndProfile(user))
+      .map(user => {
+        this.user = user;
+        return user;
+      });
   }
 }

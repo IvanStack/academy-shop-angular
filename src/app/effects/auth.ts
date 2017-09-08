@@ -13,7 +13,7 @@ export class AuthEffects {
     .ofType(auth.ActionTypes.LOGIN)
     .switchMap((action: auth.LoginAction) => this.authService.login()
       .then(res => new auth.LoginSuccessAction(res.user))
-      .catch(err => of(new auth.ServerFailAction(err)))
+      .catch(err => new auth.ServerFailAction(err))
     );
 
   @Effect()
@@ -21,7 +21,7 @@ export class AuthEffects {
     .ofType(auth.ActionTypes.LOGOUT)
     .switchMap((action: auth.LogoutAction) => this.authService.logout()
       .then(res => new auth.LogoutSuccessAction())
-      .catch(err => of(new auth.ServerFailAction(err)))
+      .catch(err => new auth.ServerFailAction(err))
     );
 
 
