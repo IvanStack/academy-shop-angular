@@ -5,13 +5,10 @@ import { User } from '../models/user';
 export function reducer(state: Auth = defaults, action: Action) {
   switch (action.type) {
     case ActionTypes.LOGIN_SUCCESS: {
-      const { displayName, photoURL } = action.payload;
-      const user = { displayName, photoURL };
-      return { ...state, user };
+      return { ...state, user: action.payload };
     }
-    case ActionTypes.LOGOUT_SUCCESS: {
+    case ActionTypes.LOGOUT_SUCCESS:
       return { ...state, user: null };
-    }
     default:
       return state;
   }

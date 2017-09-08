@@ -1,6 +1,8 @@
 type User {
   displayName: String,
+  email: String,
   photoURL: String,
+  uid: String,
   billingAddress: Address | Null,
   shippingAddress: Address | Null,
 }
@@ -57,6 +59,10 @@ path /users/{uid} is User {
   read()   { isCurrentUser(uid) || isAdmin() }
   update() { isCurrentUser(uid) || isAdmin() }
   delete() { isAdmin() }
+}
+
+path /users/{uid}/email {
+  update() { false }
 }
 
 path /roles/{uid} is Role {

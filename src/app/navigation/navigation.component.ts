@@ -4,24 +4,25 @@ import { State, getUserSelector } from '../reducers';
 import { Observable } from 'rxjs/Observable';
 import { AngularFireAuth } from 'angularfire2/auth';
 import * as firebase from 'firebase/app';
-import { LoginAction, LogoutAction } from '../actions/auth';
+import { LoginAction } from '../actions/auth';
 
 @Component({
   selector: 'app-navigation',
   template: `
     <md-nav-list>
-      <span [mdTooltip]="loggedIn ? user.displayName : ''">
-        <md-list-item (click)="toggleAuth()">
-          <img *ngIf="loggedIn" mdListAvatar [src]="user.photoURL" [alt]="user.displayName">
-          <a mdLine>{{ loggedIn ? 'Sign out' : 'Sign in with Google' }}</a>
-        </md-list-item>
-      </span>
+      <md-list-item *ngIf="loggedIn;else signInLink">
+        <img mdListAvatar *ngIf="user.photoURL" [src]="user.photoURL" [alt]="user.displayName">
+        <a mdLine uiSref="profile">{{ user.displayName }}</a>
+      </md-list-item>
+      <ng-template #signInLink>
+        <a md-list-item (click)="signIn()">Sign in with Google</a>
+      </ng-template>
       <a md-list-item uiSref="products">Products</a>
     </md-nav-list>
   `,
   styles: [`
     md-nav-list {
-      min-width: 200px;
+      width: 275px;
     }
   `]
 })
@@ -44,8 +45,7 @@ export class NavigationComponent implements OnDestroy {
     this.alive = false;
   }
 
-  toggleAuth() {
-    const action = this.loggedIn ? LogoutAction : LoginAction;
-    this.store.dispatch(new action());
+  signIn() {
+    this.store.dispatch(new LoginAction());
   }
 }
