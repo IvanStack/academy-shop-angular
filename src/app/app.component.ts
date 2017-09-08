@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { ObservableMedia } from '@angular/flex-layout';
+import { RefreshAction } from './actions/auth';
+import { Store } from '@ngrx/store';
+import { State } from './reducers';
 
 @Component({
   selector: 'app-root',
@@ -59,5 +62,7 @@ import { ObservableMedia } from '@angular/flex-layout';
 export class AppComponent {
   title = 'Ye Olde Shoppe';
 
-  constructor(public media: ObservableMedia) { }
+  constructor(private store: Store<State>, public media: ObservableMedia) {
+    this.store.dispatch(new RefreshAction(null));
+  }
 }
