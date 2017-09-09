@@ -1,5 +1,3 @@
-import { Address } from './address';
-
 export interface User {
   displayName: string;
   photoURL: string;
