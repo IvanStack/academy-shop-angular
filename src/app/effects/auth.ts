@@ -5,6 +5,7 @@ import { Action } from '@ngrx/store';
 import { of } from 'rxjs/observable/of';
 import * as auth from '../actions/auth';
 import { AuthService } from '../services/auth.service';
+import { UIRouter } from '@uirouter/angular';
 
 @Injectable()
 export class AuthEffects {
@@ -19,21 +20,25 @@ export class AuthEffects {
   @Effect()
   logout$: Observable<Action> = this.actions$
     .ofType(auth.ActionTypes.LOGOUT)
-    .switchMap((action: auth.LogoutAction) => this.authService.logout()
-      .then(res => new auth.LogoutSuccessAction())
+    .map((action: auth.LogoutAction) => action.payload)
+    .switchMap(payload => this.authService.logout()
+      .then(res => {
+        this.router.stateService.go('products');
+        return new auth.LogoutSuccessAction();
+      })
       .catch(err => new auth.ServerFailAction(err))
     );
-
 
   @Effect()
   refreshToken$: Observable<Action> = this.actions$
     .ofType(auth.ActionTypes.REFRESH)
-    .switchMap((action: auth.RefreshAction) => this.authService.refreshAuth()
+    .map((action: auth.RefreshAction) => action.payload)
+    .switchMap(payload => this.authService.refreshAuth()
       .map(user => user
         ? new auth.LoginSuccessAction(user)
         : new auth.LogoutAction()
       )
     );
 
-  constructor(private actions$: Actions, private authService: AuthService) { }
+  constructor(private actions$: Actions, private authService: AuthService, private router: UIRouter) { }
 }

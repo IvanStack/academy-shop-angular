@@ -6,6 +6,6 @@ export interface User {
   uid: string;
   isAdmin?: boolean;
   isManager?: boolean;
-  billingAddress?: Address;
-  shippingAddress?: Address;
+  billingAddress?: string;
+  shippingAddress?: string;
 }

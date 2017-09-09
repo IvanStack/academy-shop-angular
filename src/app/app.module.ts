@@ -7,6 +7,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { AppComponent } from './app.component';
 import { UIRouterModule } from '@uirouter/angular';
 import { EffectsModule } from '@ngrx/effects';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { reducers, metaReducers } from './reducers';
 
@@ -15,7 +16,9 @@ import { AuthService } from './services/auth.service';
 
 import {
   MdButtonModule,
+  MdCardModule,
   MdIconModule,
+  MdInputModule,
   MdListModule,
   MdSidenavModule,
   MdToolbarModule,
@@ -39,6 +42,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/takeWhile';
+import { UserEditComponent } from './user-edit/user-edit.component';
 
 @NgModule({
   declarations: [
@@ -46,19 +50,25 @@ import 'rxjs/add/operator/takeWhile';
     ProductsComponent,
     ProfileComponent,
     NavigationComponent,
+    UserEditComponent,
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     FlexLayoutModule,
 
+    FormsModule,
+    ReactiveFormsModule,
+
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireDatabaseModule,
     AngularFireAuthModule,
 
     MdButtonModule,
-    MdListModule,
+    MdCardModule,
     MdIconModule,
+    MdInputModule,
+    MdListModule,
     MdSidenavModule,
     MdToolbarModule,
     MdTooltipModule,
