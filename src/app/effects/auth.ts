@@ -12,7 +12,8 @@ export class AuthEffects {
   @Effect()
   login$: Observable<Action> = this.actions$
     .ofType(auth.ActionTypes.LOGIN)
-    .switchMap((action: auth.LoginAction) => this.authService.login()
+    .map((action: auth.LoginAction) => action.payload)
+    .switchMap(payload => this.authService.login()
       .then(res => new auth.LoginSuccessAction(res.user))
       .catch(err => new auth.ServerFailAction(err))
     );

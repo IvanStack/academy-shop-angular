@@ -19,7 +19,7 @@ export class LoginAction implements Action {
 export class LoginSuccessAction implements Action {
   readonly type = ActionTypes.LOGIN_SUCCESS;
 
-  constructor(public payload: any) { }
+  constructor(public payload: any = null) { }
 }
 
 export class LogoutAction implements Action {
@@ -37,13 +37,13 @@ export class LogoutSuccessAction implements Action {
 export class RefreshAction implements Action {
   readonly type = ActionTypes.REFRESH;
 
-  constructor(public payload: any) { }
+  constructor(public payload: any = null) { }
 }
 
 export class ServerFailAction implements Action {
   readonly type = ActionTypes.SERVER_FAIL;
 
-  constructor(public payload: any) { }
+  constructor(public payload: any = null) { }
 }
 
 export type Action

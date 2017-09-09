@@ -4,6 +4,7 @@ import { User } from '../models/user';
 import { Store } from '@ngrx/store';
 import { State } from '../reducers';
 import { LogoutAction } from '../actions/auth';
+import { UpdateAction, DeleteAction } from '../actions/user';
 
 @Component({
   selector: 'app-user-edit',
@@ -37,7 +38,7 @@ import { LogoutAction } from '../actions/auth';
         </p>
       </md-card-content>
       <md-card-actions>
-        <button md-button color="warn" *ngIf="canEditMetadata" (click)="deleteUser()">DELETE</button>
+        <button md-button color="warn" *ngIf="canDelete" (click)="deleteUser()">DELETE</button>
         <button md-button [disabled]="form.pristine" (click)="saveEdits()">SAVE</button>
         <button md-button *ngIf="isCurrentUser" (click)="signOut()">SIGN OUT</button>
       </md-card-actions>
@@ -56,6 +57,10 @@ export class UserEditComponent implements OnInit {
   @Input() isCurrentUser = false;
   @Input() canEditMetadata = false;
 
+  get canDelete() {
+    return this.canEditMetadata && !this.isCurrentUser;
+  }
+
   constructor(private store: Store<State>, private fb: FormBuilder) { }
 
   ngOnInit() {
@@ -67,11 +72,11 @@ export class UserEditComponent implements OnInit {
   }
 
   deleteUser() {
-    // this.store.dispatch(new DeleteAction(this.user.uid))
+    this.store.dispatch(new DeleteAction(this.user.uid));
   }
 
   saveEdits() {
-    // this.store.dispatch(new SaveAction(TODO))
+    this.store.dispatch(new UpdateAction(this.form.value));
   }
 
   signOut() {

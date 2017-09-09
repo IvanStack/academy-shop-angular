@@ -5,12 +5,19 @@ import { of } from 'rxjs/observable/of';
 import { Observable } from 'rxjs/Observable';
 import { User } from '../models/user';
 import * as firebase from 'firebase/app';
+import { Store } from '@ngrx/store';
+import { State, getUserSelector } from '../reducers';
 
 @Injectable()
 export class AuthService {
   public user: User = null;
 
-  constructor(private afAuth: AngularFireAuth, private db: AngularFireDatabase) { }
+  constructor(private afAuth: AngularFireAuth, private db: AngularFireDatabase, private store: Store<State>) {
+    this.store.select(getUserSelector)
+      .subscribe(user => {
+        this.user = user;
+      });
+  }
 
   login() {
     return this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
@@ -35,12 +42,7 @@ export class AuthService {
       if (profile.$exists()) {
         return of({ ...user, ...profile });
       } else {
-        const withoutUID = { ...user };
-        delete withoutUID.uid;
-
-        return this.db.object(key).set(withoutUID)
-          .then(() => user)
-          .catch(err => of(user));
+        return this.db.object(key).set(user).then(() => user);
       }
     });
   }
@@ -54,17 +56,13 @@ export class AuthService {
     const user = { displayName, photoURL, email, uid };
 
     return this.getRole(uid)
-      .mergeMap(role => this.getProfile(user)
+      .switchMap(role => this.getProfile(user)
         .map(profile => ({ ...profile, ...role }))
       );
   }
 
   refreshAuth() {
     return this.afAuth.authState
-      .switchMap(user => this.mergeRoleAndProfile(user))
-      .map(user => {
-        this.user = user;
-        return user;
-      });
+      .switchMap(user => this.mergeRoleAndProfile(user));
   }
 }

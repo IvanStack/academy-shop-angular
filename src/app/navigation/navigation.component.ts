@@ -10,9 +10,9 @@ import { LoginAction } from '../actions/auth';
   selector: 'app-navigation',
   template: `
     <md-nav-list>
-      <md-list-item *ngIf="loggedIn;else signInLink">
+      <md-list-item uiSref="profile" *ngIf="loggedIn;else signInLink">
         <img mdListAvatar *ngIf="user.photoURL" [src]="user.photoURL" [alt]="user.displayName">
-        <a mdLine uiSref="profile">{{ user.displayName }}</a>
+        <a mdLine>{{ user.displayName }}</a>
       </md-list-item>
       <ng-template #signInLink>
         <a md-list-item (click)="signIn()">Sign in with Google</a>

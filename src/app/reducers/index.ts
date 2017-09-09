@@ -16,7 +16,7 @@ export function logger(reducer: ActionReducer<State>): any {
 }
 
 export function localStorageSyncReducer(reducer: ActionReducer<any>): ActionReducer<any> {
-  return localStorageSync({ keys: [ 'ui' ], rehydrate: true })(reducer);
+  return localStorageSync({ keys: [ 'auth' ], rehydrate: true })(reducer);
 }
 
 export const reducers: ActionReducerMap<State> = {
