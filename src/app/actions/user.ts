@@ -1,7 +1,11 @@
 import { Action } from '@ngrx/store';
+import { User } from '../models/user';
+import { Users } from '../models/users';
 import { type } from '../util';
 
 export const ActionTypes = {
+  LOAD: type('[User] Load'),
+  LOAD_SUCCESS: type('[User] Load Success'),
   UPDATE: type('[User] Update'),
   UPDATE_SUCCESS: type('[User] Update Success'),
   DELETE: type('[User] Delete'),
@@ -9,10 +13,22 @@ export const ActionTypes = {
   SERVER_FAIL: type('[User] Server Failure'),
 };
 
+export class LoadAction implements Action {
+  readonly type = ActionTypes.LOAD;
+
+  constructor(public payload: any = null) { }
+}
+
+export class LoadSuccessAction implements Action {
+  readonly type = ActionTypes.LOAD_SUCCESS;
+
+  constructor(public payload: Users) { }
+}
+
 export class UpdateAction implements Action {
   readonly type = ActionTypes.UPDATE;
 
-  constructor(public payload: any = null) { }
+  constructor(public payload: User) { }
 }
 
 export class UpdateSuccessAction implements Action {
@@ -40,7 +56,9 @@ export class ServerFailAction implements Action {
 }
 
 export type Action
-  = UpdateAction
+  = LoadAction
+  | LoadSuccessAction
+  | UpdateAction
   | UpdateSuccessAction
   | DeleteAction
   | DeleteSuccessAction

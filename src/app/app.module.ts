@@ -11,7 +11,9 @@ import { EffectsModule } from '@ngrx/effects';
 import { reducers, metaReducers } from './reducers';
 
 import { AuthEffects } from './effects/auth';
+import { UserEffects } from './effects/user';
 import { AuthService } from './services/auth.service';
+import { UserService } from './services/user.service';
 
 import { MaterialModule } from './material/material.module';
 
@@ -50,7 +52,7 @@ import 'rxjs/add/operator/takeWhile';
     MaterialModule,
 
     StoreModule.forRoot(reducers, { metaReducers }),
-    EffectsModule.forRoot([ AuthEffects ]),
+    EffectsModule.forRoot([ AuthEffects, UserEffects ]),
     UIRouterModule.forRoot({
       states: MAIN_STATES,
       config: uiRouterConfigFn,
@@ -58,6 +60,7 @@ import 'rxjs/add/operator/takeWhile';
   ],
   providers: [
     AuthService,
+    UserService,
     { provide: NgModuleFactoryLoader, useClass: SystemJsNgModuleLoader },
   ],
   bootstrap: [AppComponent]

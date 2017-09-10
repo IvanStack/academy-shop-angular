@@ -7,12 +7,18 @@ import { User } from '../models/user';
 import * as firebase from 'firebase/app';
 import { Store } from '@ngrx/store';
 import { State, getUserSelector } from '../reducers';
+import { UserService } from './user.service';
 
 @Injectable()
 export class AuthService {
   public user: User = null;
 
-  constructor(private afAuth: AngularFireAuth, private db: AngularFireDatabase, private store: Store<State>) {
+  constructor(
+    private afAuth: AngularFireAuth,
+    private db: AngularFireDatabase,
+    private store: Store<State>,
+    private userService: UserService
+  ) {
     this.store.select(getUserSelector)
       .subscribe(user => {
         this.user = user;
@@ -36,13 +42,11 @@ export class AuthService {
   }
 
   getProfile(user: User) {
-    const key = `/users/${user.uid}`;
-
-    return this.db.object(key).switchMap(profile => {
+    return this.db.object(`/users/${user.uid}`).switchMap(profile => {
       if (profile.$exists()) {
         return of({ ...user, ...profile });
       } else {
-        return this.db.object(key).set(user).then(() => user);
+        return this.userService.updateUser(user);
       }
     });
   }
