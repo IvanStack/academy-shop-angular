@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import {
   MdButtonModule,
   MdCardModule,
+  MdCheckboxModule,
   MdIconModule,
   MdInputModule,
   MdListModule,
@@ -15,6 +16,7 @@ import {
 const materialModules = [
   MdButtonModule,
   MdCardModule,
+  MdCheckboxModule,
   MdIconModule,
   MdInputModule,
   MdListModule,

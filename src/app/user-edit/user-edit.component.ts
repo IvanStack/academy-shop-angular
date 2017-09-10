@@ -23,6 +23,11 @@ import { UpdateAction, DeleteAction } from '../actions/user';
           <md-form-field>
             <input mdInput placeholder="Photo URL" [formControl]="form.controls.photoURL">
           </md-form-field>
+          <span *ngIf="canEditMetadata">
+            <md-checkbox [formControl]="form.controls.isAdmin" [disabled]="isCurrentUser">Admin</md-checkbox>
+            <br>
+            <md-checkbox [formControl]="form.controls.isManager">Manager</md-checkbox>
+          </span>
           <md-form-field>
             <textarea mdInput mdTextareaAutosize
                 placeholder="Billing Address"

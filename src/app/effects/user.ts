@@ -22,7 +22,7 @@ export class UserEffects {
   update$: Observable<Action> = this.actions$
     .ofType(userActions.ActionTypes.UPDATE)
     .map((action: userActions.UpdateAction) => action.payload)
-    .switchMap(user => this.userService.updateUser(user)
+    .switchMap(user => this.userService.updateUser(user, this.authService.user)
       .then(() => new userActions.UpdateSuccessAction(user))
       .catch(err => of(new userActions.ServerFailAction(err)))
     );
@@ -31,7 +31,7 @@ export class UserEffects {
   delete$: Observable<Action> = this.actions$
     .ofType(userActions.ActionTypes.DELETE)
     .map((action: userActions.DeleteAction) => action.payload)
-    .switchMap(user => this.userService.updateUser(user, this.authService.user.isAdmin)
+    .switchMap(user => this.userService.updateUser(user)
       .then(() => new userActions.DeleteSuccessAction())
       .catch(err => of(new userActions.ServerFailAction(err)))
     );
