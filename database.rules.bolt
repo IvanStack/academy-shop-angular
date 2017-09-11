@@ -20,9 +20,7 @@ type Product {
 }
 
 type Order {
-  validate() { this.products.length > 0 }
-
-  products: OrderItem[],
+  quantities: Number[],
   shippingAddress: String,
   status: String,
 }

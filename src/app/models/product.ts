@@ -3,5 +3,5 @@ export class Product {
   description: string;
   image: string;
   price: number;
-  $key?: string;
+  $key: string;
 }

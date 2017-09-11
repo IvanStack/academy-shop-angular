@@ -8,11 +8,6 @@ import { ProductService } from '../services/product.service';
 import { UIRouter } from '@uirouter/angular';
 import { Product } from '../models/product';
 
-interface ProductData {
-  newProduct: Product;
-  oldProduct: Product;
-}
-
 @Injectable()
 export class ProductEffects {
   @Effect()

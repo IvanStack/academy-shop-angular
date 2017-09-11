@@ -3,7 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { State } from '../reducers';
 import { Product } from '../models/product';
-import { AddAction, UpdateAction, DeleteAction } from '../actions/product';
+import * as productActions from '../actions/product';
+import * as cartActions from '../actions/cart';
 
 @Component({
   selector: 'app-product',
@@ -93,21 +94,21 @@ export class ProductComponent implements OnInit, OnChanges {
     };
 
     if (this.product) {
-      this.store.dispatch(new UpdateAction({
+      this.store.dispatch(new productActions.UpdateAction({
         oldProduct: this.product,
         newProduct,
       }));
     } else {
-      this.store.dispatch(new AddAction(newProduct));
+      this.store.dispatch(new productActions.AddAction(newProduct));
       this.updateForm();
     }
   }
 
   deleteProduct() {
-    this.store.dispatch(new DeleteAction(this.product));
+    this.store.dispatch(new productActions.DeleteAction(this.product));
   }
 
   addToCart() {
-    // TODO
+    this.store.dispatch(new cartActions.AddAction(this.product));
   }
 }

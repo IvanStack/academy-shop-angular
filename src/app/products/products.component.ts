@@ -8,12 +8,12 @@ import { Observable } from 'rxjs/Observable';
   selector: 'app-products',
   template: `
     <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutWrap="wrap">
-      <app-product *ngIf="isManager$ | async" [canEdit]="true"></app-product>
+      <app-product *ngIf="canEdit$ | async" [canEdit]="true"></app-product>
 
       <app-product
           *ngFor="let product of products$ | async"
           [canBuy]="signedIn$ | async"
-          [canEdit]="isManager$ || isAdmin$ | async"
+          [canEdit]="canEdit$ | async"
           [canDelete]="isAdmin$ | async"
           [product]="product">
       </app-product>
@@ -33,7 +33,7 @@ export class ProductsComponent implements OnDestroy {
   public products$: Observable<Product[]>;
   public signedIn$: Observable<boolean>;
   public isAdmin$: Observable<boolean>;
-  public isManager$: Observable<boolean>;
+  public canEdit$: Observable<boolean>;
 
   constructor(private store: Store<State>) {
     this.products$ = this.store.select(getProductsSelector)
@@ -43,13 +43,13 @@ export class ProductsComponent implements OnDestroy {
       .takeWhile(() => this.alive)
       .map(user => !!user);
 
-    this.isManager$ = this.store.select(getUserSelector)
-      .takeWhile(() => this.alive)
-      .map(user => !!(user && user.isManager));
-
     this.isAdmin$ = this.store.select(getUserSelector)
       .takeWhile(() => this.alive)
       .map(user => !!(user && user.isAdmin));
+
+    this.canEdit$ = this.store.select(getUserSelector)
+      .takeWhile(() => this.alive)
+      .map(user => !!(user && (user.isManager || user.isAdmin)));
   }
 
   ngOnDestroy() {
