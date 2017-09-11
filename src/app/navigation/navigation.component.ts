@@ -17,7 +17,7 @@ import { User } from '../models/user';
           <img mdListAvatar *ngIf="user.photoURL" [src]="user.photoURL" [alt]="user.displayName">
           <a mdLine>{{ user.displayName }}</a>
         </md-list-item>
-        <md-list-item>
+        <md-list-item uiSref="cart">
           <md-icon mdListIcon>shopping_cart</md-icon>
           <a mdLine>Shopping Cart</a>
           <md-chip-list *ngIf="hasCartItems$ | async">
