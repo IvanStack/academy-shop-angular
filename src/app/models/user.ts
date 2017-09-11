@@ -14,7 +14,7 @@ export const userDefaults = {
   photoURL: '',
   email: '',
   uid: '',
-  billingAddres: '',
+  billingAddress: '',
   shippingAddress: '',
 };
 

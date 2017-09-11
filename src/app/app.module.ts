@@ -3,6 +3,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StoreModule } from '@ngrx/store';
 import { NgModule, NgModuleFactoryLoader, SystemJsNgModuleLoader } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { UIRouterModule } from '@uirouter/angular';
@@ -12,8 +13,10 @@ import { reducers, metaReducers } from './reducers';
 
 import { AuthEffects } from './effects/auth';
 import { UserEffects } from './effects/user';
+import { ProductEffects } from './effects/product';
 import { AuthService } from './services/auth.service';
 import { UserService } from './services/user.service';
+import { ProductService } from './services/product.service';
 
 import { MaterialModule } from './material/material.module';
 
@@ -25,6 +28,7 @@ import { environment } from '../environments/environment';
 
 import { MAIN_STATES, uiRouterConfigFn } from './app.states';
 import { ProductsComponent } from './products/products.component';
+import { ProductComponent } from './products/product.component';
 import { NavigationComponent } from './navigation/navigation.component';
 
 import 'rxjs/add/operator/catch';
@@ -37,12 +41,16 @@ import 'rxjs/add/operator/takeWhile';
   declarations: [
     AppComponent,
     ProductsComponent,
+    ProductComponent,
     NavigationComponent,
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     FlexLayoutModule,
+
+    FormsModule,
+    ReactiveFormsModule,
 
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireDatabaseModule,
@@ -51,7 +59,7 @@ import 'rxjs/add/operator/takeWhile';
     MaterialModule,
 
     StoreModule.forRoot(reducers, { metaReducers }),
-    EffectsModule.forRoot([ AuthEffects, UserEffects ]),
+    EffectsModule.forRoot([ AuthEffects, UserEffects, ProductEffects ]),
     UIRouterModule.forRoot({
       states: MAIN_STATES,
       config: uiRouterConfigFn,
@@ -60,6 +68,7 @@ import 'rxjs/add/operator/takeWhile';
   providers: [
     AuthService,
     UserService,
+    ProductService,
     { provide: NgModuleFactoryLoader, useClass: SystemJsNgModuleLoader },
   ],
   bootstrap: [AppComponent]
