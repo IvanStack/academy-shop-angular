@@ -23,8 +23,10 @@ export class UserEffects {
     .ofType(userActions.ActionTypes.UPDATE)
     .map((action: userActions.UpdateAction) => action.payload)
     .switchMap(user => this.userService.updateUser(user, this.authService.user)
-      .then(() => new userActions.UpdateSuccessAction(user))
-      .catch(err => of(new userActions.ServerFailAction(err)))
+      .then(
+        () => new userActions.UpdateSuccessAction(user),
+        err => new userActions.ServerFailAction(err),
+      )
     );
 
   @Effect()
@@ -32,8 +34,10 @@ export class UserEffects {
     .ofType(userActions.ActionTypes.DELETE)
     .map((action: userActions.DeleteAction) => action.payload)
     .switchMap(user => this.userService.deleteUser(user)
-      .then(() => new userActions.DeleteSuccessAction(user))
-      .catch(err => of(new userActions.ServerFailAction(err)))
+      .then(
+        () => new userActions.DeleteSuccessAction(user),
+        err => new userActions.ServerFailAction(err)
+      )
     );
 
   constructor(private actions$: Actions, private userService: UserService, private authService: AuthService) { }

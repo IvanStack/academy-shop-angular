@@ -24,8 +24,8 @@ export class UserService {
       );
   }
 
-  userProps({ isAdmin, isManager, ...user }, type = 'user') {
-    return type === 'user' ? user : { isAdmin, isManager };
+  userProps({ isAdmin, isManager, ...user }, getRoles = false) {
+    return getRoles ? { isAdmin, isManager } : user;
   }
 
   updateUser(user, currentUser = null) {
@@ -34,7 +34,7 @@ export class UserService {
       .then(() => {
         if (currentUser && currentUser.isAdmin) {
           return this.db.object(`/roles/${user.uid}`)
-            .set(this.userProps(user, 'roles'));
+            .set(this.userProps(user, true));
         }
       })
       .then(() => user);

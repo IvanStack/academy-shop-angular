@@ -18,24 +18,27 @@ import { User } from '../models/user';
         </app-user-edit>
 
         <ng-template #readonlyUser>
-          <md-card>
-            <md-card-header>
-              <img md-card-avatar [src]="user.photoURL">
-              <md-card-title>{{ user.displayName }}</md-card-title>
-              <md-card-subtitle>{{ user.email }}</md-card-subtitle>
-            </md-card-header>
-            <md-card-actions>
-              <button md-button (click)="edit(user)">EDIT</button>
-            </md-card-actions>
-          </md-card>
+          <div class="card-container">
+            <md-card>
+              <md-card-header>
+                <img md-card-avatar [src]="user.photoURL">
+                <md-card-title>{{ user.displayName }}</md-card-title>
+                <md-card-subtitle>{{ user.email }}</md-card-subtitle>
+              </md-card-header>
+              <md-card-actions>
+                <button md-button (click)="edit(user)">EDIT</button>
+              </md-card-actions>
+            </md-card>
+          </div>
         </ng-template>
       </ng-container>
     </div>
   `,
   styles: [`
-    md-card,
+    .card-container,
     app-user-edit {
       margin-bottom: 15px;
+      width: 450px;
     }
   `]
 })

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { User } from '../models/user';
 import { Store } from '@ngrx/store';
@@ -23,11 +23,11 @@ import { UpdateAction, DeleteAction } from '../actions/user';
           <md-form-field>
             <input mdInput placeholder="Photo URL" [formControl]="form.controls.photoURL">
           </md-form-field>
-          <span *ngIf="canEditMetadata">
+          <ng-container *ngIf="canViewAdmin">
             <md-checkbox [formControl]="form.controls.isAdmin">Admin</md-checkbox>
             <br>
-            <md-checkbox [formControl]="form.controls.isManager">Manager</md-checkbox>
-          </span>
+          </ng-container>
+          <md-checkbox *ngIf="canViewManager" [formControl]="form.controls.isManager">Manager</md-checkbox>
           <md-form-field>
             <textarea mdInput mdTextareaAutosize
                 placeholder="Billing Address"
@@ -56,7 +56,7 @@ import { UpdateAction, DeleteAction } from '../actions/user';
     }
   `]
 })
-export class UserEditComponent implements OnInit {
+export class UserEditComponent implements OnInit, OnChanges {
   public form: FormGroup;
 
   @Input() user: User;
@@ -66,20 +66,32 @@ export class UserEditComponent implements OnInit {
 
   @Output() onDone = new EventEmitter<any>();
 
-  get canDelete() {
-    return this.canEditMetadata && !this.isCurrentUser;
+  get canViewAdmin() {
+    return this.canEditMetadata || this.user.isAdmin;
+  }
+
+  get canViewManager() {
+    return this.canEditMetadata || this.user.isManager;
   }
 
   constructor(private store: Store<State>, private fb: FormBuilder) { }
 
-  ngOnInit() {
+  updateForm() {
     this.form = this.fb.group({
       billingAddress: '',
       shippingAddress: '',
       ...this.user,
       isAdmin: { value: this.user.isAdmin || false, disabled: this.isCurrentUser },
-      isManager: this.user.isManager || false,
+      isManager: { value: this.user.isManager || false, disabled: !this.canEditMetadata },
     });
+  }
+
+  ngOnInit() {
+    this.updateForm();
+  }
+
+  ngOnChanges() {
+    this.updateForm();
   }
 
   deleteUser() {
@@ -92,7 +104,7 @@ export class UserEditComponent implements OnInit {
   }
 
   saveEdits() {
-    this.store.dispatch(new UpdateAction(this.form.value));
+    this.store.dispatch(new UpdateAction({ ...this.user, ...this.form.value }));
     this.onDone.emit();
   }
 

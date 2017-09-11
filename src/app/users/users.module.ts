@@ -3,9 +3,8 @@ import { UIRouterModule } from '@uirouter/angular';
 import * as routes from './users.states';
 import { CommonModule } from '@angular/common';
 import { UsersComponent } from './users.component';
-import { UserEditComponent } from '../user-edit/user-edit.component';
+import { UserEditModule } from '../user-edit/user-edit.module';
 import { UserService } from '../services/user.service';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../material/material.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
@@ -14,15 +13,12 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     CommonModule,
     MaterialModule,
     FlexLayoutModule,
-
-    FormsModule,
-    ReactiveFormsModule,
+    UserEditModule,
 
     UIRouterModule.forChild(routes),
   ],
   declarations: [
     UsersComponent,
-    UserEditComponent,
   ],
   providers: [
     UserService,

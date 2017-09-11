@@ -36,7 +36,7 @@ export class NavigationComponent implements OnDestroy {
   }
 
   public get isAdmin(): boolean {
-    return !!this.user.isAdmin;
+    return !!(this.user && this.user.isAdmin);
   }
 
   constructor(private store: Store<State>) {

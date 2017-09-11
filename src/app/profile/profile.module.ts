@@ -3,7 +3,7 @@ import { UIRouterModule } from '@uirouter/angular';
 import * as routes from './profile.states';
 import { CommonModule } from '@angular/common';
 import { ProfileComponent } from './profile.component';
-import { UserEditComponent } from '../user-edit/user-edit.component';
+import { UserEditModule } from '../user-edit/user-edit.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../material/material.module';
 
@@ -11,6 +11,7 @@ import { MaterialModule } from '../material/material.module';
   imports: [
     CommonModule,
     MaterialModule,
+    UserEditModule,
 
     FormsModule,
     ReactiveFormsModule,
@@ -19,7 +20,6 @@ import { MaterialModule } from '../material/material.module';
   ],
   declarations: [
     ProfileComponent,
-    UserEditComponent,
   ]
 })
 export class ProfileModule { }
