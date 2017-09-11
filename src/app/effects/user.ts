@@ -31,8 +31,8 @@ export class UserEffects {
   delete$: Observable<Action> = this.actions$
     .ofType(userActions.ActionTypes.DELETE)
     .map((action: userActions.DeleteAction) => action.payload)
-    .switchMap(user => this.userService.updateUser(user)
-      .then(() => new userActions.DeleteSuccessAction())
+    .switchMap(user => this.userService.deleteUser(user)
+      .then(() => new userActions.DeleteSuccessAction(user))
       .catch(err => of(new userActions.ServerFailAction(err)))
     );
 

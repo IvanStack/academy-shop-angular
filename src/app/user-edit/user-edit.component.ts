@@ -1,4 +1,4 @@
-import { Component, Input, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { User } from '../models/user';
 import { Store } from '@ngrx/store';
@@ -24,7 +24,7 @@ import { UpdateAction, DeleteAction } from '../actions/user';
             <input mdInput placeholder="Photo URL" [formControl]="form.controls.photoURL">
           </md-form-field>
           <span *ngIf="canEditMetadata">
-            <md-checkbox [formControl]="form.controls.isAdmin" [disabled]="isCurrentUser">Admin</md-checkbox>
+            <md-checkbox [formControl]="form.controls.isAdmin">Admin</md-checkbox>
             <br>
             <md-checkbox [formControl]="form.controls.isManager">Manager</md-checkbox>
           </span>
@@ -43,7 +43,8 @@ import { UpdateAction, DeleteAction } from '../actions/user';
         </p>
       </md-card-content>
       <md-card-actions>
-        <button md-button color="warn" *ngIf="canDelete" (click)="deleteUser()">DELETE</button>
+        <button md-button color="warn" *ngIf="canEditMetadata" [disabled]="isCurrentUser" (click)="deleteUser()">DELETE</button>
+        <button md-button *ngIf="canCancel" (click)="cancelEdits()">CANCEL</button>
         <button md-button [disabled]="form.pristine" (click)="saveEdits()">SAVE</button>
         <button md-button *ngIf="isCurrentUser" (click)="signOut()">SIGN OUT</button>
       </md-card-actions>
@@ -61,6 +62,9 @@ export class UserEditComponent implements OnInit {
   @Input() user: User;
   @Input() isCurrentUser = false;
   @Input() canEditMetadata = false;
+  @Input() canCancel = false;
+
+  @Output() onDone = new EventEmitter<any>();
 
   get canDelete() {
     return this.canEditMetadata && !this.isCurrentUser;
@@ -73,15 +77,23 @@ export class UserEditComponent implements OnInit {
       billingAddress: '',
       shippingAddress: '',
       ...this.user,
+      isAdmin: { value: this.user.isAdmin || false, disabled: this.isCurrentUser },
+      isManager: this.user.isManager || false,
     });
   }
 
   deleteUser() {
-    this.store.dispatch(new DeleteAction(this.user.uid));
+    this.store.dispatch(new DeleteAction(this.user));
+    this.onDone.emit();
+  }
+
+  cancelEdits() {
+    this.onDone.emit();
   }
 
   saveEdits() {
     this.store.dispatch(new UpdateAction(this.form.value));
+    this.onDone.emit();
   }
 
   signOut() {

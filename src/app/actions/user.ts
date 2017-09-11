@@ -40,13 +40,13 @@ export class UpdateSuccessAction implements Action {
 export class DeleteAction implements Action {
   readonly type = ActionTypes.DELETE;
 
-  constructor(public payload: string) { }
+  constructor(public payload: User) { }
 }
 
 export class DeleteSuccessAction implements Action {
   readonly type = ActionTypes.DELETE_SUCCESS;
 
-  constructor(public payload: any = null) { }
+  constructor(public payload: User) { }
 }
 
 export class ServerFailAction implements Action {

@@ -49,6 +49,11 @@ path /users/{uid}/email {
   update() { false }
 }
 
+path /roles {
+  read()  { isAdmin() }
+  write() { false }
+}
+
 path /roles/{uid} is Role {
   read()  { isAdmin() }
   write() { isAdmin() }

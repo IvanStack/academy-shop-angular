@@ -18,6 +18,7 @@ import { LoginAction } from '../actions/auth';
         <a md-list-item (click)="signIn()">Sign in with Google</a>
       </ng-template>
       <a md-list-item uiSref="products">Products</a>
+      <a md-list-item uiSref="users" *ngIf="isAdmin">Users</a>
     </md-nav-list>
   `,
   styles: [`
@@ -32,6 +33,10 @@ export class NavigationComponent implements OnDestroy {
 
   public get loggedIn(): boolean {
     return !!this.user;
+  }
+
+  public get isAdmin(): boolean {
+    return !!this.user.isAdmin;
   }
 
   constructor(private store: Store<State>) {
