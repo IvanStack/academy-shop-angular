@@ -3,7 +3,7 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { of } from 'rxjs/observable/of';
 import { Observable } from 'rxjs/Observable';
-import { User } from '../models/user';
+import { User, roleDefaults, userProps } from '../models/user';
 import * as firebase from 'firebase/app';
 import { Store } from '@ngrx/store';
 import { State, getUserSelector } from '../reducers';
@@ -34,11 +34,9 @@ export class AuthService {
   }
 
   getRole(uid: string) {
-    const defaults = { isAdmin: false, isManager: false };
-
     return this.db.object(`/roles/${uid}`)
-      .map((data = defaults) => data)
-      .catch(() => of(defaults));
+      .map((data = {}) => ({ ...roleDefaults, ...data }))
+      .catch(() => of(roleDefaults));
   }
 
   getProfile(user: User) {
@@ -56,10 +54,9 @@ export class AuthService {
       return of(null);
     }
 
-    const { displayName, photoURL, email, uid } = afUser;
-    const user = { displayName, photoURL, email, uid };
+    const user = userProps(afUser);
 
-    return this.getRole(uid)
+    return this.getRole(user.uid)
       .switchMap(role => this.getProfile(user)
         .map(profile => ({ ...profile, ...role }))
       );
