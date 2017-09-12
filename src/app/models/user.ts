@@ -24,7 +24,17 @@ export const roleDefaults = {
 };
 
 export const userProps = values =>
-  Object.keys(userDefaults).reduce((user, key) => ({ ...user, [key]: values[key] }), userDefaults);
+  Object.keys(userDefaults).reduce(
+    (user, key) => key in values
+      ? { ...user, [key]: values[key] }
+      : user,
+    userDefaults,
+  );
 
 export const roleProps = values =>
-  Object.keys(roleDefaults).reduce((role, key) => ({ ...role, [key]: values[key] }), roleDefaults);
+  Object.keys(roleDefaults).reduce(
+    (role, key) => key in values
+      ? { ...role, [key]: values[key] }
+      : role,
+    roleDefaults,
+  );
