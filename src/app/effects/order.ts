@@ -34,17 +34,15 @@ export class OrderEffects {
   addSuccess$: Observable<Action> = this.actions$
     .ofType(orderActions.ActionTypes.ADD_SUCCESS)
     .map((action: orderActions.AddSuccessAction) => action.payload)
-    .switchMap(() => of(new cartActions.UpdateAction({ ...cartDefaults })));
+    .map(() => new cartActions.UpdateAction({ ...cartDefaults }));
 
   @Effect()
   delete$: Observable<Action> = this.actions$
     .ofType(orderActions.ActionTypes.DELETE)
     .map((action: orderActions.DeleteAction) => action.payload)
     .switchMap(order => this.orderService.deleteOrder(order)
-      .then(
-        () => new orderActions.DeleteSuccessAction(order),
-        err => new orderActions.ServerFailAction(err)
-      )
+      .map(() => new orderActions.DeleteSuccessAction(order))
+      .catch(err => of(new orderActions.ServerFailAction(err)))
     );
 
   constructor(private actions$: Actions, private orderService: OrderService) { }

@@ -1,12 +1,6 @@
 import { Ng2StateDeclaration, UIRouter } from '@uirouter/angular';
 import { ProfileComponent } from './profile.component';
-import { AuthService } from '../services/auth.service';
-
-export function requireUser(transition) {
-  return transition.injector().get(AuthService).user
-    ? true
-    : transition.router.stateService.target('products');
-}
+import { requireUser } from '../app.states';
 
 export const states: Ng2StateDeclaration[] = [
   {

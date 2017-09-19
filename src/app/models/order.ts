@@ -10,5 +10,5 @@ export const defaults = {
   ...cartDefaults,
   uid: null,
   shippingAddress: '',
-  status: 'New',
+  status: 'Ordered',
 };

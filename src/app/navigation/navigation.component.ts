@@ -24,6 +24,10 @@ import { User } from '../models/user';
             <md-chip color="accent" selected="true">{{ cartCount$ | async }}</md-chip>
           </md-chip-list>
         </md-list-item>
+        <md-list-item uiSref="orders">
+          <md-icon mdListIcon>library_books</md-icon>
+          <a mdLine>Orders</a>
+        </md-list-item>
       </ng-container>
       <ng-template #signInLink>
         <md-list-item (click)="signIn()">

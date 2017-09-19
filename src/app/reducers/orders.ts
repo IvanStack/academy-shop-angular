@@ -12,12 +12,19 @@ export function reducer(state: Order[] = [], action: Action) {
 }
 
 export const getOrders = (orders: Order[], products) =>
-  orders.map(order => ({
-    items:
-      Object.keys(order.quantities).map(key => ({
-        product: products[key] || deletedProduct(key),
-        quantity: order.quantities[key]
-      })).filter(item => item.quantity > 0),
-    shippingAddress: order.shippingAddress,
-    status: order.status,
-  }));
+  orders.map(order => {
+    const items = Object.keys(order.quantities).map(key => ({
+      product: products[key] || deletedProduct(key),
+      quantity: order.quantities[key]
+    })).filter(item => item.quantity > 0);
+
+    const price = items.reduce((sum, item) => sum + (item.quantity * item.product.price), 0);
+
+    return {
+      order,
+      items,
+      price,
+      shippingAddress: order.shippingAddress,
+      status: order.status,
+    };
+  });

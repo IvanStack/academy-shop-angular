@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { Observable } from 'rxjs/Observable';
+import { combineLatest } from 'rxjs/observable/combineLatest';
 import * as firebase from 'firebase/app';
 import * as orderActions from '../actions/order';
 import * as productActions from '../actions/product';
 import { Store } from '@ngrx/store';
-import { State } from '../reducers';
+import { State, getUserSelector } from '../reducers';
 
 @Injectable()
 export class OrderService {
@@ -18,7 +19,18 @@ export class OrderService {
   }
 
   fetchOrders() {
-    return this.db.list('/orders');
+    return this.store.select(getUserSelector)
+      .switchMap(user => {
+        if (!user) {
+          return null;
+        } else if (user.isAdmin || user.isManager) {
+          return this.db.list('/orders');
+        } else {
+          return combineLatest(
+            Object.keys(user.orders || {}).map(key => this.db.object(`/orders/${key}`))
+          );
+        }
+      });
   }
 
   addOrder(data) {
@@ -35,6 +47,9 @@ export class OrderService {
   }
 
   deleteOrder(order) {
-    return this.db.object(`/orders/${order.$key}`).remove();
+    return combineLatest(
+      this.db.object(`/orders/${order.$key}`).remove(),
+      this.db.object(`/users/${order.uid}/orders/${order.$key}`).remove(),
+    );
   }
 }

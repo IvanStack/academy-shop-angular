@@ -45,8 +45,9 @@ interface ProductHash {
         </md-list-item>
         <ng-template #viewOrders>
           <md-list-item>
+            <h4 md-line>You have no items in your shopping cart.</h4>
             <h4 md-line>
-              You have no items in your shopping cart. Would you like to <a uiSref="products">find new products</a>?
+              You can <a uiSref="orders">view previous orders</a> or <a uiSref="products">find new products</a>.
             </h4>
           </md-list-item>
         </ng-template>
