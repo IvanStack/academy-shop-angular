@@ -9,3 +9,6 @@ export function reducer(state: Product[] = [], action: Action) {
       return state;
   }
 }
+
+export const getProductsByHash = (products: Product[]) =>
+  products.reduce((hash, product) => ({ ...hash, [product.$key]: product }), {});

@@ -66,9 +66,8 @@ export class NavigationComponent implements OnDestroy {
     this.store.select(getUserSelector)
       .subscribe(user => {
         this.user = user;
+        this.store.dispatch(new LoadAction());
       });
-
-    this.store.dispatch(new LoadAction());
 
     this.cartCount$ = this.store.select(getCartCountSelector);
     this.hasCartItems$ = this.cartCount$.map(count => count > 0);

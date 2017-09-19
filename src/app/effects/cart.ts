@@ -14,7 +14,7 @@ export class CartEffects {
     .ofType(cartActions.ActionTypes.LOAD)
     .map((action: cartActions.LoadAction) => action.payload)
     .switchMap(payload => this.cartService.fetchCart()
-      .map(users => new cartActions.LoadSuccessAction(users))
+      .map(cart => new cartActions.LoadSuccessAction(cart))
       .catch(err => of(new cartActions.ServerFailAction(err)))
     );
 
@@ -23,7 +23,7 @@ export class CartEffects {
     .ofType(cartActions.ActionTypes.ADD)
     .map((action: cartActions.AddAction) => action.payload)
     .switchMap(product => this.cartService.addProduct(product)
-      .map(() => new cartActions.AddSuccessAction(product))
+      .map(cart => new cartActions.AddSuccessAction(cart))
       .catch(err => of(new cartActions.ServerFailAction(err)))
     );
 

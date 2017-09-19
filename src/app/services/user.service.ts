@@ -39,7 +39,6 @@ export class UserService {
   deleteUser(user) {
     return this.db.object(`/users/${user.uid}`).remove()
       .then(() => this.db.object(`/roles/${user.uid}`).remove())
-      .then(() => this.db.object(`/orders/${user.uid}`).remove())
       .then(() => this.db.object(`/cart/${user.uid}`).remove())
       .then(() => true);
   }

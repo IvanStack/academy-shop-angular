@@ -5,6 +5,7 @@ type User {
   uid: String,
   billingAddress: String | Null,
   shippingAddress: String | Null,
+  orders: Object | Null,
 }
 
 type Role {
@@ -19,17 +20,14 @@ type Product {
   price: Number,
 }
 
-type Order {
+type Cart {
   quantities: Number[],
-  shippingAddress: String,
-  status: String,
 }
 
-type OrderItem {
-  validate() { this.quantity > 0 }
-
-  product: Product,
-  quantity: Number,
+type Order extends Cart {
+  uid: String,
+  shippingAddress: String,
+  status: String,
 }
 
 path /users {
@@ -45,6 +43,10 @@ path /users/{uid} is User {
 }
 
 path /users/{uid}/email {
+  update() { false }
+}
+
+path /users/{uid}/orders/{id} {
   update() { false }
 }
 
@@ -70,26 +72,26 @@ path /products/{id} is Product {
   delete() { isAdmin() }
 }
 
-path /cart/{uid} is Order {
+path /cart/{uid} is Cart {
   create() { isCurrentUser(uid) }
   read()   { isCurrentUser(uid) }
   update() { isCurrentUser(uid) }
   delete() { isCurrentUser(uid) || isAdmin() }
 }
 
-path /orders/{uid} {
+path /orders {
+  read() { isManager() || isAdmin() }
+}
+
+path /orders/{id} is Order {
+  create() { isCurrentUser(this.uid) }
+  read()   { isCurrentUser(this.uid) || isManager() || isAdmin() }
+  update() { false }
   delete() { isAdmin() }
 }
 
-path /orders/{uid}/{id} is Order {
-  create() { isCurrentUser(uid) }
-  read()   { isCurrentUser(uid) || isManager() || isAdmin() }
-  update() { false }
-}
-
-path /orders/{uid}/{id}/status {
-  create() { isCurrentUser(uid) }
-  read()   { isCurrentUser(uid) || isManager() }
+path /orders/{id}/status {
+  create() { isCurrentUser(this.parent().uid) }
   update() { isManager() }
   delete() { false }
 }

@@ -1,19 +1,14 @@
-import { Product } from './product';
+import { Cart, defaults as cartDefaults } from './cart';
 
-export class Order {
-  quantities: {
-    [productId: string]: number;
-  };
+export class Order extends Cart {
+  uid: string;
   shippingAddress: string;
   status: string;
 }
 
-export const defaults: Order = {
-  quantities: {},
+export const defaults = {
+  ...cartDefaults,
+  uid: null,
   shippingAddress: '',
   status: 'New',
 };
-
-export const getProp = (key, value = defaults[key]) => ({ [key]: value });
-export const orderProps = values =>
-  Object.keys(defaults).reduce((user, key) => ({ ...user, ...getProp(key, values[key]) }), defaults);

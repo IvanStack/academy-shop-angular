@@ -7,6 +7,7 @@ export class User {
   isManager?: boolean;
   billingAddress?: string;
   shippingAddress?: string;
+  orders: object;
 }
 
 export const userDefaults = {
@@ -16,6 +17,7 @@ export const userDefaults = {
   uid: '',
   billingAddress: '',
   shippingAddress: '',
+  orders: {},
 };
 
 export const roleDefaults = {

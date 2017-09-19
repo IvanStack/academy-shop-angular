@@ -28,7 +28,7 @@ import * as cartActions from '../actions/cart';
             <input mdInput placeholder="Image URL" [formControl]="form.controls.image">
           </md-form-field>
           <md-form-field>
-            <textarea mdInput mdTexttareaAutosize
+            <textarea mdInput mdTextareaAutosize
                 placeholder="Description"
                 [formControl]="form.controls.description">
             </textarea>
@@ -48,7 +48,11 @@ import * as cartActions from '../actions/cart';
       </md-card-actions>
     </md-card>
   `,
-  styles: [],
+  styles: [`
+    md-form-field {
+      width: 100%;
+    }
+  `],
 })
 export class ProductComponent implements OnInit, OnChanges {
   public form: FormGroup;

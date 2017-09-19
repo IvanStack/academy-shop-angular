@@ -15,11 +15,13 @@ import { AuthEffects } from './effects/auth';
 import { UserEffects } from './effects/user';
 import { ProductEffects } from './effects/product';
 import { CartEffects } from './effects/cart';
+import { OrderEffects } from './effects/order';
 
 import { AuthService } from './services/auth.service';
 import { UserService } from './services/user.service';
 import { ProductService } from './services/product.service';
 import { CartService } from './services/cart.service';
+import { OrderService } from './services/order.service';
 
 import { MaterialModule } from './material/material.module';
 
@@ -62,7 +64,7 @@ import 'rxjs/add/operator/takeWhile';
     MaterialModule,
 
     StoreModule.forRoot(reducers, { metaReducers }),
-    EffectsModule.forRoot([ AuthEffects, UserEffects, ProductEffects, CartEffects ]),
+    EffectsModule.forRoot([ AuthEffects, UserEffects, ProductEffects, CartEffects, OrderEffects ]),
     UIRouterModule.forRoot({
       states: MAIN_STATES,
       config: uiRouterConfigFn,
@@ -73,6 +75,7 @@ import 'rxjs/add/operator/takeWhile';
     UserService,
     ProductService,
     CartService,
+    OrderService,
     { provide: NgModuleFactoryLoader, useClass: SystemJsNgModuleLoader },
   ],
   bootstrap: [AppComponent]

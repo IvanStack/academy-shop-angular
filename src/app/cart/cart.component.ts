@@ -3,10 +3,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Product } from '../models/product';
 import { Order } from '../models/order';
 import { Store } from '@ngrx/store';
-import { State, getProductsSelector, getCartSelector, getUserSelector } from '../reducers';
+import { User } from '../models/user';
+import { State, getProductsByHashSelector, getCartSelector, getUserSelector } from '../reducers';
 import { Observable } from 'rxjs/Observable';
 import * as productActions from '../actions/product';
 import * as cartActions from '../actions/cart';
+import * as orderActions from '../actions/order';
 
 interface OrderItem {
   product: Product;
@@ -35,77 +37,89 @@ interface ProductHash {
             \${{ item.product.price * form.controls[item.product.$key].value }}
           </p>
         </md-list-item>
-        <md-list-item>
+        <md-list-item *ngIf="hasItems$ | async; else viewOrders">
           <h4 md-line>
             Total <small *ngIf="form.dirty">(Update the cart to see the correct total)</small>
           </h4>
           <p md-line>\${{ total$ | async }}</p>
         </md-list-item>
+        <ng-template #viewOrders>
+          <md-list-item>
+            <h4 md-line>
+              You have no items in your shopping cart. Would you like to <a uiSref="products">find new products</a>?
+            </h4>
+          </md-list-item>
+        </ng-template>
         <md-list-item>
           <h4 md-line>
             Shipping Address <small>(change in <a uiSref="profile">user profile</a>)</small>
           </h4>
-          <p md-line>{{ shippingAddress$ | async }}</p>
+          <div md-line><pre>{{ shippingAddress$ | async }}</pre></div>
         </md-list-item>
       </md-list>
       <md-card-actions>
-        <button md-button (click)="updateCart()" [disabled]="form.pristine || !form.valid">UPDATE</button>
+        <button md-button (click)="updateCart()" [disabled]="form.pristine || !form.valid">UPDATE ORDER</button>
+        <button md-button (click)="confirmOrder()" [disabled]="form.dirty" *ngIf="hasItems$ | async">FINISH CHECKOUT</button>
       </md-card-actions>
     </md-card>
   `,
-  styles: []
+  styles: [`
+    pre {
+      margin: 0;
+    }
+  `]
 })
 export class CartComponent implements OnDestroy {
   private alive = true;
-  private cart: Order;
 
   public form: FormGroup;
-  public shippingAddress: string;
+  public user: User;
   public shippingAddress$: Observable<string>;
   public items$: Observable<OrderItem[]>;
   public total$: Observable<number>;
+  public hasItems$: Observable<boolean>;
 
   public get updatedCart() {
     return {
-      ...this.cart,
       quantities: this.form.value,
+    };
+  }
+
+  public get newOrder() {
+    return {
+      ...this.updatedCart,
+      status: 'New',
+      uid: this.user.uid,
+      shippingAddress: this.user.shippingAddress,
     };
   }
 
   constructor(private store: Store<State>, private fb: FormBuilder) {
     this.store.dispatch(new productActions.LoadAction());
-    this.shippingAddress$ = this.store.select(getUserSelector)
-      .map(user => user && user.shippingAddress);
 
-    this.shippingAddress$
+    this.shippingAddress$ = this.store.select(getUserSelector)
       .takeWhile(() => this.alive)
-      .subscribe(address => {
-        this.shippingAddress = address;
+      .map(user => {
+        this.user = user;
+        return user && user.shippingAddress;
       });
 
-    this.items$ = this.store.select(getProductsSelector)
+    this.items$ = this.store.select(getCartSelector)
       .takeWhile(() => this.alive)
-      .map(products => products.reduce((byHash, product) => ({ ...byHash, [product.$key]: product }), {}))
-      .switchMap(products => this.store.select(getCartSelector)
-        .takeWhile(() => this.alive)
-        .map(cart => {
-          this.cart = cart;
+      .map(cart => {
+        this.form = this.fb.group(
+          cart.items.reduce((controls, item) => ({
+            ...controls,
+            [item.product.$key]: [ item.quantity, Validators.pattern(/^[0-9]+$/) ],
+          }), {})
+        );
 
-          const items = Object.keys(cart.quantities).map(key => ({
-            product: products[key],
-            quantity: cart.quantities[key]
-          })).filter(item => item.product && item.quantity > 0);
+        return cart.items;
+      });
 
-          this.form = this.fb.group(
-            items.reduce((controls, item) => ({
-              ...controls,
-              [item.product.$key]: [ item.quantity, Validators.pattern(/^[0-9]+$/) ],
-            }), {})
-          );
-
-          return items;
-        })
-      );
+    this.hasItems$ = this.items$
+      .takeWhile(() => this.alive)
+      .map(items => items.length > 0);
 
     this.total$ = this.items$
       .takeWhile(() => this.alive)
@@ -118,5 +132,9 @@ export class CartComponent implements OnDestroy {
 
   updateCart() {
     this.store.dispatch(new cartActions.UpdateAction(this.updatedCart));
+  }
+
+  confirmOrder() {
+    this.store.dispatch(new orderActions.AddAction(this.newOrder));
   }
 }

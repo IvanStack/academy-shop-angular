@@ -1,16 +1,17 @@
 import { Action } from '@ngrx/store';
-import { Cart } from '../models/cart';
+import { Order } from '../models/order';
 import { Product } from '../models/product';
+import { User } from '../models/user';
 import { type } from '../util';
 
 export const ActionTypes = {
-  LOAD: type('[Cart] Load'),
-  LOAD_SUCCESS: type('[Cart] Load Success'),
-  ADD: type('[Cart] Add'),
-  ADD_SUCCESS: type('[Cart] Add Success'),
-  UPDATE: type('[Cart] Update'),
-  UPDATE_SUCCESS: type('[Cart] Update Success'),
-  SERVER_FAIL: type('[Cart] Server Failure'),
+  LOAD: type('[Order] Load'),
+  LOAD_SUCCESS: type('[Order] Load Success'),
+  ADD: type('[Order] Add'),
+  ADD_SUCCESS: type('[Order] Add Success'),
+  DELETE: type('[Order] Delete'),
+  DELETE_SUCCESS: type('[Order] Delete Success'),
+  SERVER_FAIL: type('[Order] Server Failure'),
 };
 
 export class LoadAction implements Action {
@@ -22,31 +23,31 @@ export class LoadAction implements Action {
 export class LoadSuccessAction implements Action {
   readonly type = ActionTypes.LOAD_SUCCESS;
 
-  constructor(public payload: Cart) { }
+  constructor(public payload: Order[]) { }
 }
 
 export class AddAction implements Action {
   readonly type = ActionTypes.ADD;
 
-  constructor(public payload: Product) { }
+  constructor(public payload: Order) { }
 }
 
 export class AddSuccessAction implements Action {
   readonly type = ActionTypes.ADD_SUCCESS;
 
-  constructor(public payload: Product) { }
+  constructor(public payload: Order) { }
 }
 
-export class UpdateAction implements Action {
-  readonly type = ActionTypes.UPDATE;
+export class DeleteAction implements Action {
+  readonly type = ActionTypes.DELETE;
 
-  constructor(public payload: Cart) { }
+  constructor(public payload: Order) { }
 }
 
-export class UpdateSuccessAction implements Action {
-  readonly type = ActionTypes.UPDATE_SUCCESS;
+export class DeleteSuccessAction implements Action {
+  readonly type = ActionTypes.DELETE_SUCCESS;
 
-  constructor(public payload: Cart) { }
+  constructor(public payload: Order) { }
 }
 
 export class ServerFailAction implements Action {
@@ -60,6 +61,7 @@ export type Action
   | LoadSuccessAction
   | AddAction
   | AddSuccessAction
-  | UpdateAction
-  | UpdateSuccessAction
+  | DeleteAction
+  | DeleteSuccessAction
   | ServerFailAction;
+
