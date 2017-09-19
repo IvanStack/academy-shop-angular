@@ -41,7 +41,7 @@ interface ProductHash {
           <h4 md-line>
             Total <small *ngIf="form.dirty">(Update the cart to see the correct total)</small>
           </h4>
-          <p md-line>\${{ total$ | async }}</p>
+          <p md-line>\${{ total }}</p>
         </md-list-item>
         <ng-template #viewOrders>
           <md-list-item>
@@ -77,7 +77,7 @@ export class CartComponent implements OnDestroy {
   public user: User;
   public shippingAddress$: Observable<string>;
   public items$: Observable<OrderItem[]>;
-  public total$: Observable<number>;
+  public total: number;
   public hasItems$: Observable<boolean>;
 
   public get updatedCart() {
@@ -115,16 +115,14 @@ export class CartComponent implements OnDestroy {
           }), {})
         );
 
+        this.total = cart.items.reduce((sum, item) => sum + item.quantity * item.product.price, 0);
+
         return cart.items;
       });
 
     this.hasItems$ = this.items$
       .takeWhile(() => this.alive)
       .map(items => items.length > 0);
-
-    this.total$ = this.items$
-      .takeWhile(() => this.alive)
-      .map(items => items.reduce((sum, item) => sum + (item.quantity * item.product.price), 0));
   }
 
   ngOnDestroy() {
@@ -136,6 +134,18 @@ export class CartComponent implements OnDestroy {
   }
 
   confirmOrder() {
-    this.store.dispatch(new orderActions.AddAction(this.newOrder));
+    const handler = (<any>window).StripeCheckout.configure({
+      key: 'pk_test_r6fb4ieJLyspQnMikvyN29lv',
+      locale: 'auto',
+      token: () => {
+        this.store.dispatch(new orderActions.AddAction(this.newOrder));
+      }
+    });
+
+    handler.open({
+      name: 'Ye Olde Shoppe',
+      description: 'Purchase from Ye Olde Shoppe',
+      amount: this.total * 100,
+    });
   }
 }
