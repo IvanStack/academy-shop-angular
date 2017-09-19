@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Product } from '../models/product';
-import { Order } from '../models/order';
+import { Order, defaults as orderDefaults } from '../models/order';
 import { Store } from '@ngrx/store';
 import { User } from '../models/user';
 import { State, getProductsByHashSelector, getCartSelector, getUserSelector } from '../reducers';
@@ -88,8 +88,8 @@ export class CartComponent implements OnDestroy {
 
   public get newOrder() {
     return {
+      ...orderDefaults,
       ...this.updatedCart,
-      status: 'New',
       uid: this.user.uid,
       shippingAddress: this.user.shippingAddress,
     };
