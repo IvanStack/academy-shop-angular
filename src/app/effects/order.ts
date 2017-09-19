@@ -20,6 +20,17 @@ export class OrderEffects {
     );
 
   @Effect()
+  updateStatus$: Observable<Action> = this.actions$
+    .ofType(orderActions.ActionTypes.UPDATE_STATUS)
+    .map((action: orderActions.UpdateStatusAction) => action.payload)
+    .switchMap(payload => this.orderService.updateOrderStatus(payload)
+      .then(
+        () => new orderActions.UpdateStatusSuccessAction(payload),
+        err => new orderActions.ServerFailAction(err)
+      )
+    );
+
+  @Effect()
   add$: Observable<Action> = this.actions$
     .ofType(orderActions.ActionTypes.ADD)
     .map((action: orderActions.AddAction) => action.payload)

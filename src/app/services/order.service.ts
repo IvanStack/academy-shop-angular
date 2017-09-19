@@ -42,7 +42,7 @@ export class OrderService {
       });
   }
 
-  updateOrderStatus(order, orderStatus) {
+  updateOrderStatus({ order, orderStatus }) {
     return this.db.object(`/orders/${order.$key}/status`).set(orderStatus);
   }
 
